@@ -1,7 +1,9 @@
 var fs = require('fs')
 
-function readFromTextFile(fileLocation){
-    console.log(fs.readFileSync(fileLocation, 'utf8'))
+
+STATISPIC_PHOTO_INDEX_FILE_LOCATION = "D:/Statispic/Photos/imageIndex.txt"
+function writeToTextFile(fileLocation, index){
+    fs.writeFileSync(fileLocation, index) // Index is the current index for the photos
 }
 
-readFromTextFile("D:/Statispic/statispicPassword.txt")
+writeToTextFile(STATISPIC_PHOTO_INDEX_FILE_LOCATION, 0)

@@ -1,4 +1,5 @@
 const { app } = require('electron')
+const prompt = require('electron-prompt');
 var api = require('instagram-private-api');
 var fs = require('fs');
 //var mongo = require('mongodb') // Importing MongoDB database
@@ -6,16 +7,21 @@ var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/mydb";
 const download = require('image-downloader')
 // Download to a directory and save with an another filename
+
 var options = {
     url: 'http://someurl.com/image2.jpg',
     dest: 'stam.jpg'      // Save to the current dir. 
 }
 var photoString = 'Photos/'
 var jpgString = '.jpg'
-var imageIndex = 0 // Keeping track of the images indexes so that the program won't override images.
 
 function readFromTextFile(fileLocation){
     return fs.readFileSync(fileLocation, 'utf8')
+}
+
+STATISPIC_PHOTO_INDEX_FILE_LOCATION = "D:/Statispic/Photos/imageIndex.txt"
+function writeToTextFile(fileLocation, index){
+    fs.writeFileSync(fileLocation, index) // Index is the current index for the photos
 }
 
 function AppendListToTextFile(list_data) {
@@ -27,11 +33,11 @@ function AppendListToTextFile(list_data) {
 
 var account = { // for the instagram API login
     accName: 'statispic_test',
-    password: readFromTextFile("D:/Statispic/statispicPassword.txt") // Change this if there is a new password
+    password: readFromTextFile("D:/Statispic/statispicPassword.txt") // Change the file if there is a new password
 }
 
 
-const IG_USERNAME = 'tomercahal' // The username that I will download the photos from
+//const IG_USERNAME = 'romi.bennun'//'tomercahal' // The username that I will download the photos from
 
 function TryDatabase() {
     MongoClient.connect(url, { useUnifiedTopology: true }, function (err, db) {
@@ -41,9 +47,23 @@ function TryDatabase() {
     });
 }
 
+async function getUserName(){
+    var data = await prompt({
+        title: 'Add user\'s photos to the database',
+        label: 'Enter username:',
+        value: '',
+        inputAttrs: {
+            type: 'text'
+        },
+        type: 'input',
+        width : 500,
+        height : 175
+    })
+    return data
+}
 
-
-function runInstagarm() {
+async function runInstagarm() {
+    const IG_USERNAME = await getUserName() //'tomercahal' The username that I will download the photos from
     const ig = new api.IgApiClient();
 
     ig.state.generateDevice(IG_USERNAME);
@@ -59,6 +79,7 @@ function runInstagarm() {
         const userFeed = ig.feed.user(retUser.pk);
         var postsFoundCounter = 0
         var amountOfPhotos = 0
+        var imageIndex = readFromTextFile(STATISPIC_PHOTO_INDEX_FILE_LOCATION) // Keeping track of the images indexes so that the program won't override images.
         var dataFromAccount = [] // Used to contain all the data that will go into the text file
         do {
             const myPostsFirstPage = await userFeed.items();
@@ -72,7 +93,6 @@ function runInstagarm() {
                     photo_likes = myPostsFirstPage[i].like_count
                     photo_username =  myPostsFirstPage[i].user.username
                     console.log(myPostsFirstPage[i])
-                    //console.log(myPostsFirstPage[i])
                     imageIndex++; // ImageIndex starts off as 0 and needs to be incremented every new image that we are saving.
                     var photoIndex =  "photo" + imageIndex + jpgString // In Javascript strings are immutable (can't change)
                     var destName = photoString + photoIndex
@@ -93,6 +113,7 @@ function runInstagarm() {
         }
         while (userFeed.moreAvailable);
 
+        writeToTextFile(STATISPIC_PHOTO_INDEX_FILE_LOCATION, imageIndex)
         AppendListToTextFile(dataFromAccount) //Appending all the latest user photo data into the text file
         console.log('found: ' + postsFoundCounter + ' posts')
         console.log("total amount of photos is: " + amountOfPhotos)
