@@ -103,7 +103,7 @@ async function runInstagarm() {
                         .then(({ filename, image }) => {
                         })
                         .catch((err) => console.error(err))
-                    dataFromAccount.push("\r\n" + photoIndex + " " + photo_likes + " " + photo_username + " " + userFollowersCount)
+                    dataFromAccount.push("\r\n" + photoIndex + " " + photo_likes + " " + photo_username + " " + userFollowersCount + " " + (photo_likes/userFollowersCount))
                 }
                 
             }
