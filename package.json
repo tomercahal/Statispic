@@ -23,6 +23,8 @@
     "electron-prompt": "^1.5.1",
     "image-downloader": "^3.5.0",
     "instagram-private-api": "^1.39.0",
-    "mongodb": "^3.5.3"
+    "knex": "^0.20.13",
+    "mongodb": "^3.5.3",
+    "sqlite3": "^4.1.1"
   }
 }
