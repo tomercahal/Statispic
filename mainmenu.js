@@ -2,10 +2,14 @@ const { app, shell, dialog, browserWindow, Notification } = require('electron')
 const prompt = require('electron-prompt');
 var api = require('instagram-private-api');
 var fs = require('fs');
-//var mongo = require('mongodb') // Importing MongoDB database
+const util = require('util')
+
+//MongoDB stuff, will use them in try database and when adding each image into the database
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/mydb";
+
 const download = require('image-downloader') // Download to a directory and save with an another filename
+
 
 
 var ig = new api.IgApiClient();
@@ -16,6 +20,7 @@ var options = {
 }
 var photoString = 'Photos/' // The sub folder that the photos are in
 var jpgString = '.jpg'
+const dir_pictures = "D:/Statispic/Photos/"
 
 var filters_file_explorer = [{ name: 'Images', extensions: ['jpg'] }] //only jpgs because that's what I download from Instagram and what the ML model expects
 
@@ -36,20 +41,25 @@ function AppendListToTextFile(list_data) {
 }
 
 var account = { // for the instagram API login
-    accName: 'statispic_test',
+    accName: 'statispic',
     password: readFromTextFile("D:/Statispic/statispicPassword.txt") // Change the file if there is a new password
 }
 
 
 //const IG_USERNAME = 'romi.bennun'//'tomercahal' // The username that I will download the photos from
 
-function TryDatabase() {
-    MongoClient.connect(url, { useUnifiedTopology: true }, function (err, db) {
-        if (err) throw err;
-        console.log("Database created!");
-        db.close();
-    });
+function InsertToDatabase(picData) {
+    MongoClient.connect(url, function (err, db) {
+        if (err) console.log(err);
+        var database = db.db("statispic_database")
+        database.collection("statispic_database").insertOne(picData, function (err, yes) {
+            if (err) console.log(err)
+            console.log("Successfully inserted a picture to the database! Here are the image details:")
+            console.log(util.inspect(picData, false, null, true))
+        })
+    })
 }
+
 
 async function openPromptBox(title_info, label_info) {
     var data = await prompt({
@@ -87,9 +97,11 @@ async function dologin() {
     var loggedInUser = await ig.account.login(account.accName, account.password);
     process.nextTick(async () => await ig.simulate.postLoginFlow());
     console.log("Successfully logged in!!!")
+    noti = new Notification({title: "Loggged in successfully!"})
+    noti.show()
 }
 
-async function analyze(){
+async function analyze() {
     dirs = dialog.showOpenDialogSync(browserWindow, { title: "Statispic!!", buttonLabel: "Let's rock!", filters: filters_file_explorer, properties: ["multiSelections"] })
     console.log(dirs)
     let myNotification = new Notification('Error', { body: "Invalid username/password" }) // Just testing notification 
@@ -109,35 +121,36 @@ async function runInstagarm() {
         retUser = await ig.user.searchExact(IG_USERNAME) //The amount of followers that the user has
         retInfo = await ig.user.info(retUser.pk)
         userFollowersCount = retInfo.follower_count
-        // userFollowersAmount = await ig.user.searchExact(retUser.pk) //The amount of followers that the user has
         const userFeed = ig.feed.user(retUser.pk);
         var postsFoundCounter = 0
         var amountOfPhotos = 0
         var imageIndex = readFromTextFile(STATISPIC_PHOTO_INDEX_FILE_LOCATION) // Keeping track of the images indexes so that the program won't override images.
         var dataFromAccount = [] // Used to contain all the data that will go into the text file
         do {
-            const myPostsFirstPage = await userFeed.items();
+            const myPostsFirstPage = await userFeed.items(); // needs to be await
             for (i = 0; i < myPostsFirstPage.length; i++) {
                 if (myPostsFirstPage[i].media_type === 1) {
-                    console.log(myPostsFirstPage[i].image_versions2.candidates[0].url)
                     var postURLToDownload = myPostsFirstPage[i].image_versions2.candidates[0].url
                     amountOfPhotos++;
-                    console.log("The amount of likes for the post is " + myPostsFirstPage[i].like_count)
-                    console.log("The page it was taken from: " + myPostsFirstPage[i].user.username)
                     photo_likes = myPostsFirstPage[i].like_count
                     photo_username = myPostsFirstPage[i].user.username
-                    console.log(myPostsFirstPage[i])
                     imageIndex++; // ImageIndex starts off as 0 and needs to be incremented every new image that we are saving.
                     var photoIndex = "photo" + imageIndex + jpgString // In Javascript strings are immutable (can't change)
                     var destName = photoString + photoIndex
                     options.url = postURLToDownload
                     options.dest = destName
-                    console.log(options)
                     download.image(options)
                         .then(({ filename, image }) => {
                         })
                         .catch((err) => console.error(err))
-                    dataFromAccount.push("\r\n" + photoIndex + " " + photo_likes + " " + photo_username + " " + userFollowersCount + " " + (photo_likes / userFollowersCount))
+
+                    pic_data_to_db = {
+                        dir_location: dir_pictures + photoIndex, likes: photo_likes,
+                        user_uploaded: photo_username, followers: userFollowersCount,
+                        success_ratio: (photo_likes / userFollowersCount)
+                    }
+                    InsertToDatabase(pic_data_to_db)
+                    dataFromAccount.push("\r\n" + dir_pictures + photoIndex + " " + photo_likes + " " + photo_username + " " + userFollowersCount + " " + (photo_likes / userFollowersCount))
                 }
 
             }
@@ -151,7 +164,10 @@ async function runInstagarm() {
         AppendListToTextFile(dataFromAccount) //Appending all the latest user photo data into the text file
         console.log('found: ' + postsFoundCounter + ' posts')
         console.log("total amount of photos is: " + amountOfPhotos)
-    })();
+        var noti = new Notification({title:"Finished!", body: "I went through " + photo_username + "'s account and I saved " + amountOfPhotos + " total pictures."})
+        noti.show()
+    })
+        ();
 }
 
 async function uploadInstagram() {
@@ -167,9 +183,11 @@ async function uploadInstagram() {
 
 }
 
-async function displayInstagramProfile(){
+async function displayInstagramProfile() {
     var profileName = await openPromptBox('View Your Instagram Profile', 'Enter username:') //'tomercahal' The username that I will download the photos from
     shell.openExternal("https://www.instagram.com/" + profileName + "/")
+    var noti = new Notification({ title: "Showing now", body: "Opening up " + profileName + "'s Instagram profile in your browser." })
+    noti.show()
 }
 
 
@@ -207,7 +225,7 @@ module.exports = [{
                 displayInstagramProfile()
             }
         },
-        {type: 'separator'}, //Creating a space between the the options and the quit option 
+        { type: 'separator' }, //Creating a space between the the options and the quit option 
         {
             label: "Exit",
             click() {
