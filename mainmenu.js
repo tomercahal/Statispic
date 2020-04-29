@@ -13,11 +13,13 @@ const download = require('image-downloader') // Download to a directory and save
 
 
 var ig = new api.IgApiClient();
+let LOGGEDIN = false;
 
 var options = {
     url: 'http://someurl.com/image2.jpg',
     dest: 'stam.jpg'      // Save to the current dir. 
 }
+
 var photoString = 'Photos/' // The sub folder that the photos are in
 var jpgString = '.jpg'
 const dir_pictures = "D:/Statispic/Photos/"
@@ -42,11 +44,14 @@ function AppendListToTextFile(list_data) {
 
 var account = { // for the instagram API login
     accName: 'statispic',
-    password: readFromTextFile("D:/Statispic/statispicPassword.txt") // Change the file if there is a new password
+    password: readFromTextFile("D:/School/statispicPassword.txt") // Change the file if there is a new password
 }
 
-
-//const IG_USERNAME = 'romi.bennun'//'tomercahal' // The username that I will download the photos from
+function showNotification(notificationOptions){
+    //This is a function that recieves notification options, it then created a notification and shows it to the user.
+    var noti = new Notification(notificationOptions)
+    noti.show()
+}
 
 function InsertToDatabase(picData) {
     MongoClient.connect(url, function (err, db) {
@@ -60,9 +65,18 @@ function InsertToDatabase(picData) {
     })
 }
 
+function fileExplorerOuptut(singleOrMulti) {///Single or multi is property that is being passed to dialog. It changes the option that the user can choose multiple photos or not
+    if (singleOrMulti)
+        dirs = dialog.showOpenDialogSync(browserWindow, { title: "Statispic!!", buttonLabel: "Let's rock!", filters: filters_file_explorer, properties: "multiSelections" })
+    else
+        dirs = dialog.showOpenDialogSync(browserWindow, { title: "Statispic!!", buttonLabel: "Let's rock!", filters: filters_file_explorer }).toString()
+    console.log(dirs)
+    return dirs
+}
 
-async function openPromptBox(title_info, label_info) {
-    var data = await prompt({
+
+function openPromptBox(title_info, label_info) {
+    var data = prompt({
         title: title_info,
         label: label_info,
         value: '',
@@ -76,48 +90,51 @@ async function openPromptBox(title_info, label_info) {
     return data
 }
 
-async function openPromptLoginBox() { // might user later to ask for login info
-    var data = await prompt({
-        title: "Login to Instagram",
-        label: "Username:",
-        value: '',
-        inputAttrs: {
-            type: 'text'
-        },
-        type: 'input',
-        width: 500,
-        height: 175
+function checkIfLoggedIn(){
+    if(LOGGEDIN) //Checking if the user has logged in yet
+        return
+    dologin()
+
+}
+
+function getUsernameAndPassword() {
+    openPromptBox("Login to instagram", "Enter the username: ").then(usernameInput =>{
+        searchedResult = ig.user.searchExact(usernameInput)
+        console.log(searchedResult)
     })
+    var passwordInput = openPromptBox("Login to instagram", "Enter the password: ")
+    console.log()
+    account.accName = usernameInput
+    account.password = passwordInput
+    
 }
 
 async function dologin() {
     ig.state.generateDevice(account.accName);
-
+    getUsernameAndPassword() // Puts the username and password into accname
     await ig.simulate.preLoginFlow();
     var loggedInUser = await ig.account.login(account.accName, account.password);
     process.nextTick(async () => await ig.simulate.postLoginFlow());
     console.log("Successfully logged in!!!")
-    noti = new Notification({title: "Loggged in successfully!"})
-    noti.show()
+    LOGGEDIN = true
+    showNotification({ title: "Loggged in successfully!"})
 }
 
 async function analyze() {
     dirs = dialog.showOpenDialogSync(browserWindow, { title: "Statispic!!", buttonLabel: "Let's rock!", filters: filters_file_explorer, properties: ["multiSelections"] })
     console.log(dirs)
-    let myNotification = new Notification('Error', { body: "Invalid username/password" }) // Just testing notification 
-    myNotification.show()
 }
+
 async function runInstagarm() {
 
-    const IG_USERNAME = await openPromptBox('Add user\'s photos to the database', 'Enter username:') //'tomercahal' The username that I will download the photos from
-    const ig = new api.IgApiClient();
-
+    var IG_USERNAME = await openPromptBox('Add user\'s photos to the database', 'Enter username:') //'tomercahal' The username that I will download the photos from
+    await checkIfLoggedIn()
     ig.state.generateDevice(IG_USERNAME);
 
     (async () => {
-        await ig.simulate.preLoginFlow();
-        const loggedInUser = await ig.account.login(account.accName, account.password);
-        process.nextTick(async () => await ig.simulate.postLoginFlow());
+        //await ig.simulate.preLoginFlow();
+        //const loggedInUser = await ig.account.login(account.accName, account.password);
+        //process.nextTick(async () => await ig.simulate.postLoginFlow());
         retUser = await ig.user.searchExact(IG_USERNAME) //The amount of followers that the user has
         retInfo = await ig.user.info(retUser.pk)
         userFollowersCount = retInfo.follower_count
@@ -164,21 +181,29 @@ async function runInstagarm() {
         AppendListToTextFile(dataFromAccount) //Appending all the latest user photo data into the text file
         console.log('found: ' + postsFoundCounter + ' posts')
         console.log("total amount of photos is: " + amountOfPhotos)
-        var noti = new Notification({title:"Finished!", body: "I went through " + photo_username + "'s account and I saved " + amountOfPhotos + " total pictures."})
-        noti.show()
+        showNotification({ title: "Finished!", body: "I went through " + photo_username + "'s account and I saved " + amountOfPhotos + " total pictures." })
     })
         ();
 }
 
 async function uploadInstagram() {
+    dir = fileExplorerOuptut() // "Photos/upload_tries/try4.jpg"
     console.log('Publishing photo')
-    ig.publish.photo({ file: fs.readFileSync("Photos/try.jpg"), caption: "This is a test upload" }) // The file needs to be in the allowed size, still need to check for that
+    ig.publish.photo({ file: fs.readFileSync(dir), caption: "This is a test upload" }) // The file needs to be in the allowed size, still need to check for that
         .then(publishResult => {
-            console.log('Photo post return media id: ' + publishResult.media.id);
+            if (typeof publishResult.media.id == 'undefined') //Checking if the image has been successfully uploaded (if it has an id)
+            dialog.showMessageBox({ type: "error", title: "Uh Oh!", message: "Error. Instagram had some trouble uploading your picture.\r\n"+
+            "The problem is usually in the image size/aspect ration, please try again later." })
+            else {
+                console.log('Photo post return media id: ' + publishResult.media.id);
+                console.log(publishResult)
+                showNotification({ title: "Image successfully uploaded!!", body: "The image is now up on " + account.accName + "'s Instagram profile" })
+            }
         })
         .catch(e => {
             // error during post photo 
             console.log('--- Error --- sendPostForAccount [pAccount.ig.publish.photo] error:' + e.message);
+            dialog.showMessageBox({ type: "error", title: "Uh Oh!", message: "Error. Instagram had some trouble uploading your picture.\r\n"})
         })
 
 }
@@ -186,8 +211,19 @@ async function uploadInstagram() {
 async function displayInstagramProfile() {
     var profileName = await openPromptBox('View Your Instagram Profile', 'Enter username:') //'tomercahal' The username that I will download the photos from
     shell.openExternal("https://www.instagram.com/" + profileName + "/")
-    var noti = new Notification({ title: "Showing now", body: "Opening up " + profileName + "'s Instagram profile in your browser." })
-    noti.show()
+    showNotification({ title: "Showing now", body: "Opening up " + profileName + "'s Instagram profile in your browser." })
+}
+
+async function tries() {
+    //dialog.showErrorBox("Error this is real bad g", "oh no")
+    //dialog.showMessageBox({type: "warnig", buttons: ["ok", "bet"], title: "Oh shit!", message: "Oh no this is not looking good!"})
+    //dialog.showMessageBox({ type: "error", title: "Uh Oh!", message: "Error. Instagram had some trouble uploading your picture.\r\nThe problem is usually in the image size/aspect ration, please try again later." })
+    // const ig = new api.IgApiClient();
+
+    // ig.state.generateDevice("tomercahal");
+    // retUser = await ig.user.searchExact("123456255jldjflsjg") //The amount of followers that the user has
+    // console.log(retUser)
+    var l = openPromptBox("","")
 }
 
 
@@ -198,6 +234,12 @@ module.exports = [{
             label: 'Login to Instagram',
             click: () => {
                 dologin()
+            }
+        },
+        {
+            label: 'tries',
+            click: () => {
+                tries()
             }
         },
         {

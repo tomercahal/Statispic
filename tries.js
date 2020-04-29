@@ -46,6 +46,7 @@ var url = "mongodb://localhost:27017/statispic_database";
 //     })
 // });
 const util = require("util")
-var objectt = {name: "tomer", call: "wassup dude?"}
-console.log(util.inspect(objectt, false, null, true))
+//var objectt = {name: "tomer", call: "wassup dude?"}
+//console.log(util.inspect(objectt, false, null, true))
+
 
