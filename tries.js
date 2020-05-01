@@ -17,8 +17,8 @@
 // })
 // console.log(4)
 
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/statispic_database";
+//var MongoClient = require('mongodb').MongoClient;
+//var url = "mongodb://localhost:27017/statispic_database";
 
 // MongoClient.connect(url, function (err, db) {
 //     if (err) console.log(err);
@@ -46,7 +46,33 @@ var url = "mongodb://localhost:27017/statispic_database";
 //     })
 // });
 const util = require("util")
-//var objectt = {name: "tomer", call: "wassup dude?"}
-//console.log(util.inspect(objectt, false, null, true))
+//const request = require("request")
+const https = require("https")
 
 
+// https.get("https://www.instagram.com/statispic/", resp => {
+//     let data = ""
+
+//     // A chunk of data has been recieved.
+//     resp.on("data", chunk => {
+//         data += chunk;
+//     })
+
+//     console.log(data)
+//     //The whole response has been received. Print out the result.
+//     resp.on("end", () => {
+//         let url = JSON.parse(data).hdurl
+//         console.log(url)
+//     });
+// })
+// .on("error", err => {
+//     console.log("Error: " + err.message)
+// })
+
+const request = require('request');
+
+request('https://www.instagram.com/tomercahal', { json: true }, (err, res, body) => {
+  if (err) { return console.log(err); }
+  console.log(body);
+  console.log(body.url);
+});

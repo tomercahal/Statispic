@@ -42,12 +42,17 @@ function AppendListToTextFile(list_data) {
     }
 }
 
+var tester_account ={ // for the instagram API login
+    accName: 'statispic',
+    password: readFromTextFile("D:/School/statispicPassword.txt") // Change the file if there is a new password
+}
+
 var account = { // for the instagram API login
     accName: 'statispic',
     password: readFromTextFile("D:/School/statispicPassword.txt") // Change the file if there is a new password
 }
 
-function showNotification(notificationOptions){
+function showNotification(notificationOptions) {
     //This is a function that recieves notification options, it then created a notification and shows it to the user.
     var noti = new Notification(notificationOptions)
     noti.show()
@@ -75,8 +80,8 @@ function fileExplorerOuptut(singleOrMulti) {///Single or multi is property that 
 }
 
 
-function openPromptBox(title_info, label_info) {
-    var data = prompt({
+async function openPromptBox(title_info, label_info) {
+    var data = await prompt({
         title: title_info,
         label: label_info,
         value: '',
@@ -90,36 +95,53 @@ function openPromptBox(title_info, label_info) {
     return data
 }
 
-function checkIfLoggedIn(){
-    if(LOGGEDIN) //Checking if the user has logged in yet
+async function sideLogin(){
+    ig.state.generateDevice(account.accName);
+    await ig.simulate.preLoginFlow();
+    const loggedInUser = await ig.account.login(tester_account.accName, tester_account.password);
+    process.nextTick(async () => await ig.simulate.postLoginFlow());
+}
+
+function checkIfLoggedIn() {
+    if (LOGGEDIN) //Checking if the user has logged in yet
         return
     dologin()
 
 }
 
-function getUsernameAndPassword() {
-    openPromptBox("Login to instagram", "Enter the username: ").then(usernameInput =>{
-        searchedResult = ig.user.searchExact(usernameInput)
+async function getUsernameAndPassword() {
+    console.log('before')
+    var usernameInput = await openPromptBox("Login to instagram", "Enter the username: ")
+    console.log(usernameInput)
+    ig.user.searchExact(usernameInput)
+    .then(searchedResult => {
+        console.log("The username is valid!! Sick bruv")
         console.log(searchedResult)
     })
-    var passwordInput = openPromptBox("Login to instagram", "Enter the password: ")
-    console.log()
-    account.accName = usernameInput
-    account.password = passwordInput
-    
+    .catch(e => {
+        // error during post photo 
+        console.log('--- Error --- The username entered is not found. The e.message: ' + e.message);
+        dialog.showMessageBox({ type: "error", title: "Uh Oh!", message: "Error. The username you entered in invalid :("})
+    })
+
+    //account.accName = usernameInput
+    //account.password = passwordInput        
+    //console.log('after')
 }
 
 async function dologin() {
-    ig.state.generateDevice(account.accName);
-    getUsernameAndPassword() // Puts the username and password into accname
-    await ig.simulate.preLoginFlow();
+    await sideLogin()
+    await getUsernameAndPassword() // Puts the username and password into accname
+/*    
+    ig.simulate.preLoginFlow();
     var loggedInUser = await ig.account.login(account.accName, account.password);
     process.nextTick(async () => await ig.simulate.postLoginFlow());
     console.log("Successfully logged in!!!")
     LOGGEDIN = true
     showNotification({ title: "Loggged in successfully!"})
+*/    
 }
-
+ 
 async function analyze() {
     dirs = dialog.showOpenDialogSync(browserWindow, { title: "Statispic!!", buttonLabel: "Let's rock!", filters: filters_file_explorer, properties: ["multiSelections"] })
     console.log(dirs)
@@ -194,8 +216,10 @@ async function uploadInstagram() {
             if (typeof publishResult.media.id == 'undefined') //Checking if the image has been successfully uploaded (if it has an id)
             dialog.showMessageBox({ type: "error", title: "Uh Oh!", message: "Error. Instagram had some trouble uploading your picture.\r\n"+
             "The problem is usually in the image size/aspect ration, please try again later." })
-            else {
-                console.log('Photo post return media id: ' + publishResult.media.id);
+                else {
+                     
+                            console.log('Photo post return media id: ' + publishResult.media.id);
+                
                 console.log(publishResult)
                 showNotification({ title: "Image successfully uploaded!!", body: "The image is now up on " + account.accName + "'s Instagram profile" })
             }
@@ -205,7 +229,7 @@ async function uploadInstagram() {
             console.log('--- Error --- sendPostForAccount [pAccount.ig.publish.photo] error:' + e.message);
             dialog.showMessageBox({ type: "error", title: "Uh Oh!", message: "Error. Instagram had some trouble uploading your picture.\r\n"})
         })
-
+ 
 }
 
 async function displayInstagramProfile() {
@@ -225,7 +249,7 @@ async function tries() {
     // console.log(retUser)
     var l = openPromptBox("","")
 }
-
+ 
 
 module.exports = [{
     label: 'Actions',
