@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="173b111d-c859-462a-8231-1c33d3a5a426" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Photos/imageIndex.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../Photos/imageIndex.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../instagram.js" beforeDir="false" afterPath="$PROJECT_DIR$/../instagram.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../main.js" beforeDir="false" afterPath="$PROJECT_DIR$/../main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../mainmenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/../mainmenu.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tries.js" beforeDir="false" afterPath="$PROJECT_DIR$/../tries.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tries.py" beforeDir="false" afterPath="$PROJECT_DIR$/../tries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML_Client.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ML_Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/ML_Server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/instaLooker.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,7 +19,7 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/tries.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="269">
+                <state relative-caret-position="816">
                   <caret line="48" selection-start-line="48" selection-end-line="48" />
                   <folding>
                     <marker date="1589908966323" expanded="true" signature="1874:2127" ph="..." />
@@ -45,7 +40,7 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/statispic_model_predict.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="17">
+                <state relative-caret-position="136">
                   <caret line="17" column="41" selection-start-line="17" selection-start-column="41" selection-end-line="17" selection-end-column="41" />
                   <folding>
                     <element signature="e#115#165#0" expanded="true" />
@@ -54,37 +49,13 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/ML_Server.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="207">
-                  <caret line="141" column="28" selection-start-line="141" selection-start-column="28" selection-end-line="141" selection-end-column="28" />
+                <state relative-caret-position="2417">
+                  <caret line="163" column="12" selection-start-line="163" selection-start-column="12" selection-end-line="163" selection-end-column="12" />
                   <folding>
                     <element signature="e#49#95#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/ML_Client.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1513">
-                  <caret line="105" column="31" selection-start-line="105" selection-start-column="31" selection-end-line="105" selection-end-column="31" />
-                  <folding>
-                    <element signature="e#0#13#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/instaLooker.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="102">
-                  <caret line="6" selection-start-line="6" selection-end-line="6" />
-                  <folding>
-                    <element signature="e#0#17#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -93,14 +64,14 @@
         </leaf>
       </split-first>
       <split-second>
-        <leaf>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/ML_Client.py">
+            <entry file="file://$PROJECT_DIR$/tries.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="154">
-                  <caret line="76" column="65" selection-start-line="76" selection-start-column="65" selection-end-line="76" selection-end-column="65" />
+                <state relative-caret-position="670">
+                  <caret line="48" selection-start-line="48" selection-end-line="48" />
                   <folding>
-                    <element signature="e#0#13#0" expanded="true" />
+                    <marker date="1589908966323" expanded="true" signature="1874:2127" ph="..." />
                   </folding>
                 </state>
               </provider>
@@ -148,9 +119,9 @@
         <option value="$PROJECT_DIR$/ML_Server2.py" />
         <option value="$PROJECT_DIR$/ML_Client2.py" />
         <option value="$PROJECT_DIR$/tries.py" />
-        <option value="$PROJECT_DIR$/ML_Server.py" />
         <option value="$PROJECT_DIR$/instaLooker.py" />
         <option value="$PROJECT_DIR$/ML_Client.py" />
+        <option value="$PROJECT_DIR$/ML_Server.py" />
       </list>
     </option>
   </component>
@@ -166,6 +137,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -177,11 +149,10 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ML" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Python" />
   </component>
   <component name="RunDashboard">
@@ -196,7 +167,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.ML_Server">
+  <component name="RunManager" selected="Python.ML_Client">
     <configuration name="ML_Client" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Server and Client (python)" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -283,8 +254,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ML_Server" />
         <item itemvalue="Python.ML_Client" />
+        <item itemvalue="Python.ML_Server" />
         <item itemvalue="Python.tries" />
         <item itemvalue="Python.instaLooker" />
       </list>
@@ -307,7 +278,7 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.114605546" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11567164" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -329,26 +300,8 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/ML_Client2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1972">
-          <caret line="117" column="30" selection-start-line="117" selection-start-column="30" selection-end-line="117" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ML_Server2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="14" selection-start-line="17" selection-start-column="14" selection-end-line="17" selection-end-column="14" />
-          <folding>
-            <element signature="e#49#95#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/ML_Client2.py" />
+    <entry file="file://$PROJECT_DIR$/ML_Server2.py" />
     <entry file="file://$PROJECT_DIR$/key.key">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -358,7 +311,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/statispic_model_predict.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
+        <state relative-caret-position="136">
           <caret line="17" column="41" selection-start-line="17" selection-start-column="41" selection-end-line="17" selection-end-column="41" />
           <folding>
             <element signature="e#115#165#0" expanded="true" />
@@ -366,9 +319,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/instaLooker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
+          <folding>
+            <element signature="e#0#17#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ML_Client.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="116" column="12" selection-start-line="116" selection-start-column="12" selection-end-line="116" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/tries.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
+        <state relative-caret-position="816">
           <caret line="48" selection-start-line="48" selection-end-line="48" />
           <folding>
             <marker date="1589908966323" expanded="true" signature="1874:2127" ph="..." />
@@ -378,30 +351,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ML_Server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="141" column="28" selection-start-line="141" selection-start-column="28" selection-end-line="141" selection-end-column="28" />
+        <state relative-caret-position="2417">
+          <caret line="163" column="12" selection-start-line="163" selection-start-column="12" selection-end-line="163" selection-end-column="12" />
           <folding>
             <element signature="e#49#95#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/instaLooker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-          <folding>
-            <element signature="e#0#17#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ML_Client.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="76" column="65" selection-start-line="76" selection-start-column="65" selection-end-line="76" selection-end-column="65" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>

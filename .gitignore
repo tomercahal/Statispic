@@ -1,4 +1,6 @@
 node_modules
+Statispic_UI/Statispic_GUI/*
+!Statispic_UI/Statispic_GUI/Assets
 server_and_client/key.key
 photo*
 .vscode

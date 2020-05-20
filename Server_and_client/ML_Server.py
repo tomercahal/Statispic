@@ -40,9 +40,9 @@ class Server (object):
         self.PORT = 220  # The chose port to have the connection on
         self.users_allowed = sys.maxsize # This is the amount of users that are allowed to be logged in at the same time
         self.sem = threading.Semaphore(self.users_allowed)  # using semaphore in order to handle the threads
-        self.ML_model_location = "D:/statispic2/final-statispic_model.hdf5"
-        self.ML_model = load_model("D:/statispic2/final-statispic_model.hdf5")  # Loading the ML model
-        self.server_file_extract_dir = "D:/Statispic2/Server_and_client/thread"
+        self.ML_model_location = "D:/Statispic/final-statispic_model.hdf5"
+        self.ML_model = load_model("D:/Statispic/final-statispic_model.hdf5")  # Loading the ML model
+        self.server_file_extract_dir = "D:/Statispic/Server_and_client/thread"
         self.encrypt_key_path = "D:/Statispic2/Server_and_client/key.key"  # Where the key is located at
         self.encryption_key = self.read_key()  # Getting the encryption key from the key file
         self.decryptor = Fernet(self.encryption_key)  # Initializing the Fernet with the key
@@ -162,7 +162,6 @@ class Server (object):
         """This is the server start function that is called in the beginning. This function accepts new clients
         and starts the thread for them with the appropriate thread number."""
         try:
-            print(self.encryption_key)
             print(f"Server starting up on {self.IP} port {self.PORT}")
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Initializing the socket.
 
