@@ -1,9 +1,22 @@
 const Bluebird = require('bluebird');
 var fs = require('fs');
 var api = require('instagram-private-api');
+var request = require('request-promise');
 
-const cookiesDirectory = './cookies_ig/'
+const {promisify} = require('util');
+const {
+    writeFile,
+    readFile,
+    exists
+} = require('fs');
 
+const writeFileAsync = promisify(writeFile);
+const readFileAsync = promisify(readFile);
+const existsAsync = promisify(exists);
+
+const cookiesDirectory = './cookie/'
+
+const IgCheckpointError = api.IgCheckpointError
 
 
 async function getPromptInput(title, label, defaultValue) {
@@ -25,29 +38,6 @@ async function getPromptInput(title, label, defaultValue) {
     return result;
 }
 
-
-async function loginToInstagram(ig) {
-    // await readState(ig);
-    ig.request.end$.subscribe(() => saveState(ig));
-    // await ig.account.login(credentials.username, credentials.password);
-    Bluebird.try(async () => {
-        const auth = await ig.account.login(ig.accName, ig.accPassword);
-        console.log(utils.runTimeStr() + ig.accName + ' Login (ig) success to account')
-    }).catch(IgCheckpointError, async () => {
-        console.log(utils.runTimeStr() + ig.accName + ' Login (ig) Catch IgCheckpointError... ')
-        // console.log('Catch IgCheckpointError...')
-        console.log(ig.state.checkpoint); // Checkpoint info here
-        await ig.challenge.auto(true); // Requesting sms-code or click "It was me" button
-        console.log(ig.state.checkpoint); // Challenge info here
-
-        code = await utils.getPromptInput('Security Code', 'code', '******')
-        console.log('code: ' + code);
-        console.log(await ig.challenge.sendSecurityCode(code));
-    });
-
-}
-
-
 async function saveState(ig) {
     var stateFileName = cookiesDirectory + ig.accName + '.json';
     const cookies = await ig.state.serializeCookieJar();
@@ -61,7 +51,7 @@ async function saveState(ig) {
         build: ig.state.build,
     };
     // return writeFileAsync('state.json', JSON.stringify(stateAndCookie), { encoding: 'utf8' });
-    return fs.writeFileSync(stateFileName, JSON.stringify(stateAndCookie), {
+    return writeFileAsync(stateFileName, JSON.stringify(stateAndCookie), {
         encoding: 'utf8'
     });
 }
@@ -70,12 +60,12 @@ async function saveState(ig) {
 async function readState(ig) {
     // if (!await existsAsync('state.json')){
     var stateFileName = cookiesDirectory + ig.accName + '.json'
-    if (fs.existsSync(stateFileName)) {
+    if (!await existsAsync(stateFileName)) {
         return 'new';
     }
 
     // await ig.importState(await readFileAsync('state.json', {encoding: 'utf8'}));
-    const stateAndCookie = JSON.parse(await fs.readFileSync(stateFileName, {
+    const stateAndCookie = JSON.parse(await readFileAsync(stateFileName, {
         encoding: 'utf8'
     }));
     await ig.state.deserializeCookieJar(stateAndCookie.cookies);
@@ -89,7 +79,33 @@ async function readState(ig) {
     return 'exist';
 }
 
-async function ig_doLogin(account) {
+
+async function loginToInstagram(ig) {
+    // await readState(ig);
+    ig.request.end$.subscribe(() => saveState(ig));
+    // await ig.account.login(credentials.username, credentials.password);
+    Bluebird.try(async () => {
+        console.log('From loginToInstagram doing log in: \r\nUsername: ' + ig.accName + '\r\npassword: ' + ig.accPassword)
+
+        const auth = await ig.account.login(ig.accName, ig.accPassword);
+        // const auth = await ig.account.login(accname, accPass);
+        console.log(ig.accName + ' Has successfully logged in')
+    }).catch(IgCheckpointError, async () => {
+        console.log(ig.accName + ' Login (ig) Catch IgCheckpointError... ')
+        // console.log('Catch IgCheckpointError...')
+        console.log(ig.state.checkpoint); // Checkpoint info here
+        await ig.challenge.auto(true); // Requesting sms-code or click "It was me" button
+        console.log(ig.state.checkpoint); // Challenge info here
+
+        code = await getPromptInput('Security Code', 'code', '******')
+        console.log('code: ' + code);
+        console.log(await ig.challenge.sendSecurityCode(code));
+    });
+
+}
+
+
+async function ig_doLogin(account, runPostAndPreActions = true) {
 
     account.ig = new api.IgApiClient()
     account.ig.accName = account.accName;
@@ -97,15 +113,18 @@ async function ig_doLogin(account) {
     const c_accName = account.accName;
 
     account.ig.state.generateDevice(account.ig.accName);
+    if (runPostAndPreActions) {
+        // await account.ig.simulate.preLoginFlow()
+    };
     let newLogin = false
     if (await readState(account.ig) === 'new') {
-        console.log(utils.runTimeStr() + 'New login and create cookie for account: ' + account.accName);
+        console.log('New login and create cookie for account: ' + account.accName);
         newLogin = true
     }
 
     await loginToInstagram(account.ig);
 
-    if (newLogin) {
+    if (runPostAndPreActions && newLogin) {
         // process.nextTick(async () => await account.ig.simulate.postLoginFlow());
         process.nextTick(async () => {
             account.ig.simulate.postLoginFlow()
@@ -117,3 +136,11 @@ async function ig_doLogin(account) {
     await saveState(account.ig);
 }
 
+function deleteAccountCookie(accName) {
+    fs.unlinkSync(__dirname + '/cookies/' + accName + '.json')
+    console.log(utils.runTimeStr() + 'delete cookie for accName: ' + accName);
+}
+
+module.exports = {
+    ig_doLogin
+}

@@ -8,14 +8,15 @@
 
 // writeToTextFile(STATISPIC_PHOTO_INDEX_FILE_LOCATION, 0)
 
-// const spawn = require("child_process").spawn; //for the connection with python
-// const pythonProcess = spawn('python',["tries.py", 1,2,3]);
+const spawn = require("child_process").spawn; //for the connection with python
 
-// console.log(2)
-// pythonProcess.stdout.on('data', (data) =>{
-//     console.log(data.toString())
-// })
-// console.log(4)
+const pythonProcess = spawn('python',["tries.py", 1,2,3]);
+
+console.log(2)
+pythonProcess.stdout.on('data', (data) =>{
+    console.log(data.toString())
+})
+console.log(4)
 
 //var MongoClient = require('mongodb').MongoClient;
 //var url = "mongodb://localhost:27017/statispic_database";
@@ -45,9 +46,9 @@
 //         db.close();
 //     })
 // });
-const util = require("util")
+//const util = require("util")
 //const request = require("request")
-const https = require("https")
+//const https = require("https")
 
 
 // https.get("https://www.instagram.com/statispic/", resp => {
@@ -69,10 +70,12 @@ const https = require("https")
 //     console.log("Error: " + err.message)
 // })
 
-const request = require('request');
+// const request = require('request');
 
-request('https://www.instagram.com/tomercahal', { json: true }, (err, res, body) => {
-  if (err) { return console.log(err); }
-  console.log(body);
-  console.log(body.url);
-});
+// request('https://www.instagram.com/tomercahal', { json: true }, (err, res, body) => {
+//   if (err) { return console.log(err); }
+//   console.log(body);
+//   console.log(body.url);
+// });
+var s = ["bigboi"]
+console.log(typeof s)

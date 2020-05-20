@@ -17,17 +17,19 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^8.0.0"
+    "electron": "^8.2.5"
   },
   "dependencies": {
+    "bluebird": "^3.7.2",
     "electron-prompt": "^1.5.1",
     "express": "^4.17.1",
     "image-downloader": "^3.5.0",
-    "instagram-private-api": "^1.39.0",
+    "instagram-private-api": "^1.39.2",
     "jade": "^1.11.0",
-    "knex": "^0.20.13",
-    "mongodb": "^3.5.6",
+    "knex": "^0.20.15",
+    "mongodb": "^3.5.7",
     "request": "^2.88.2",
-    "sqlite3": "^4.1.1"
+    "sqlite3": "^4.2.0",
+    "util": "^0.12.3"
   }
 }

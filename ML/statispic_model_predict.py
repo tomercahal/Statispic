@@ -2,25 +2,22 @@
 # python load_model.py --images malaria/testing --model saved_model.model
 
 # import the necessary packages
-from keras.preprocessing.image import img_to_array
-from keras.optimizers import Adam
 from keras.models import load_model
-from datasets import *
-from models import *
 import numpy as np
-import argparse
-import random
 import cv2 as cv
 import sys
 
-BEST_WEIGHTS_DIR = "D:/Statispic2/best-weights.hdf5"
+BEST_WEIGHTS_DIR = "D:/Statispic2/try-best-weights.hdf5"  # Where the best weights are saved
+
 
 def load_images_for_trained_model(list_of_dirs):
+	"""This function is called with the a list of the paths to images that need to be predicted. It returns a numpy
+	array consisting of the images ready to be predicted in the same format that model was trained on."""
 	# initialize our images array (i.e., the house images themselves)
 	images = []
 
 	# loop over the indexes of the houses
-	for im_dir in list_of_dirs:
+	for im_dir in list_of_dirs:  # For every directory
 		print(im_dir)
 		image = cv.imread(im_dir)
 		image = cv.resize(image, (400,400)) #Try this for better results
@@ -33,13 +30,13 @@ def load_images_for_trained_model(list_of_dirs):
 
 
 # Load all the dirs provided as args for pictures
-print(sys.argv)
+print("Starting the model predictions!")
 print(len(sys.argv))
-all_image_dirs = [sys.argv[i+1] for i in range(len(sys.argv)-1)]
+#all_image_dirs = [sys.argv[i+1] for i in range(len(sys.argv)-1)] # for calling with python
+all_image_dirs = str(sys.argv[1]).split(" ")  # for calling with node.js/C#
 print(all_image_dirs)
 images_ready_for_prediction = load_images_for_trained_model(all_image_dirs)
 images_ready_for_prediction = images_ready_for_prediction / 255.0  #normalizing
-print(images_ready_for_prediction)
 # load the pre-trained network
 print("[INFO] loading pre-trained network...")
 # model = create_cnn(400, 400, 3, regress=True)
@@ -47,11 +44,17 @@ print("[INFO] loading pre-trained network...")
 # model.load_weights(BEST_WEIGHTS_DIR)
 # model.compile(loss="mean_absolute_percentage_error", optimizer=opt)
 
-model = load_model("D:/statispic2/statispic_model.hdf5")  # Loading the model
+model = load_model("D:/statispic2/final-statispic_model.hdf5")  # Loading the model
 print("Successfully loaded the model with the weights provided!")
 
 prediction = model.predict(images_ready_for_prediction)
-print (prediction)
+print(prediction)
+prediction_mul_list = prediction.tolist()
+prediction_list = [val for sublist in prediction_mul_list for val in sublist]
+print(prediction_list)
 for i in range(len(all_image_dirs)):
 	print("X(image dir)=%s, Predicted value=%s" % (all_image_dirs[i], prediction[i]))
-	# Later on sort the photos and return with sys.flush or something like that
+best_image_dir = all_image_dirs[prediction_list.index(max(prediction_list))]
+print("The best image is: " + best_image_dir + " !!!!")
+sys.stdout.flush()
+	#Later on sort the photos and return with sys.flush or something like that

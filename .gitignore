@@ -1,1 +1,10 @@
 node_modules
+server_and_client/key.key
+photo*
+.vscode
+cookie
+statispic_test
+ML/.idea
+ML/__pycache__
+package.json
+package-lock.json

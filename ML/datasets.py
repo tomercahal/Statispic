@@ -19,8 +19,7 @@ def load_pictures_attributes(inputPath):
 	return df
 
 
-
-def load_house_images(df, inputPath):
+def load_insta_images(df, inputPath):
 	# initialize our images array (i.e., the house images themselves)
 	images = []
 
@@ -29,14 +28,10 @@ def load_house_images(df, inputPath):
 	for im_dir in images_dirs:
 		im_dir = "D:/statispic2" + im_dir[1:] #The right dir
 		image = cv.imread(im_dir)
-		image = cv.resize(image, (400,400)) #Try this for better results
+		image = cv.resize(image, (300, 300)) #Try this for better results
 		# cv.imshow('sample image', image) #for showing the image
 		# cv.waitKey(0)
 		images.append(image)
 
-
 	# return our set of images
 	return np.array(images)
-
-
-#df = load_pictures_attributes("D:/statispic2/Photos/statispicData.txt")
